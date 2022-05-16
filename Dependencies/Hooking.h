@@ -10,6 +10,7 @@
 
 namespace hook
 {
+	//taken most of this code is taken form cfx.re and modfified a little
 	template<typename ValueType, typename AddressType>
 	inline void put(AddressType address, ValueType value)
 	{
@@ -20,7 +21,7 @@ namespace hook
 
 		VirtualProtect((void*)address, sizeof(value), oldProtect, &oldProtect);
 
-		FlushInstructionCache (GetCurrentProcess(), (void*)address, sizeof(value));
+		FlushInstructionCache (GetCurrentProcess(), (void*)address, sizeof(value)); //not sure if we need this 
 	}
 
 	template<typename T, typename TAddr>
@@ -41,6 +42,7 @@ namespace hook
 		return (T)target;
 	}
 
+	//this code below is written by me for patching stuff on might not be be good but works
 	template<typename Bytes, typename AddressType>
 	inline void patch(AddressType address, std::initializer_list<Bytes> bytes)
 	{
@@ -52,6 +54,6 @@ namespace hook
 
 		VirtualProtect(reinterpret_cast<PVOID>(address), bytes.size(), oldProtect, &oldProtect);
 
-		FlushInstructionCache (GetCurrentProcess(), reinterpret_cast<PVOID>(address), bytes.size());
+		FlushInstructionCache (GetCurrentProcess(), reinterpret_cast<PVOID>(address), bytes.size()); //not sure if we need this
 	}
 }
