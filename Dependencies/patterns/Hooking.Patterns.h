@@ -1,8 +1,9 @@
 /*
  * This file is part of the CitizenFX project - http://citizen.re/
  *
- * See LICENSE and MENTIONS in the root of the source tree for information
- * regarding licensing.
+ *  Use of this source code is subject to the terms provided on the CitizenFX
+ *  Collective web site, currently versioned (4) at the following web URL:
+ *  https://fivem.net/terms
  */
 
 #pragma once
