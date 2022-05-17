@@ -45,7 +45,7 @@ namespace hook
 		return (T)target;
 	}
 
-	//this code below is written by me for patching stuff on might not be be good but works
+	//simple code to patch stuff
 	template<typename Bytes, typename AddressType>
 	inline void patch(AddressType address, std::initializer_list<Bytes> bytes)
 	{
@@ -60,12 +60,15 @@ namespace hook
 		FlushInstructionCache (GetCurrentProcess(), reinterpret_cast<PVOID>(address), bytes.size()); //not sure if we need this
 	}
 
+	//find patterns in a specific module
 	template<typename T = void>
 	inline auto get_module_pattern(const char* modulename, std::string_view pattern_string, ptrdiff_t offset = 0)
 	{
-		if (GetModuleHandle(modulename) != nullptr)
+		auto moduleHandle = GetModuleHandle(modulename);
+
+		if (moduleHandle != nullptr)
 		{
-			return pattern(GetModuleHandle(modulename), std::move(pattern_string)).get_first<T>(offset);
+			return pattern(moduleHandle, std::move(pattern_string)).get_first<T>(offset);
 		}
 	}
 
