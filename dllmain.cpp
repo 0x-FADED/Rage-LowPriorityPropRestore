@@ -6,7 +6,6 @@
 
 
 //credits to Disquse for research assistant and LMS for some valuable advice 
-//
 enum class GameType
 {
     Invalid = 0,
@@ -14,8 +13,7 @@ enum class GameType
 	RedDeadRedemption2 = 2,
 };
 
-// putting this in hk_func() causes serious lag for some reason
-int32_t* loc = hook::get_address<int32_t*>(hook::get_pattern<uint8_t>("0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));  //address of rage::fwMapData::ms_entityLevelCap default value is 2 we want to set this to 3
+int32_t* loc = hook::get_address<int32_t*>(hook::get_pattern<uint8_t>("0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));  //address of rage::fwMapData::ms_entityLevelCap default value here is 0 we want to set this to 3
 
 std::initializer_list<int32_t> patch
 {
@@ -34,26 +32,32 @@ static VOID hk_func(void *a1, UCHAR a2)
 }
 static void modInit(GameType Game)
 {
-	if (Game == GameType::GrandTheftAutoV)
+	switch (Game)
 	{
+
+	case GameType::GrandTheftAutoV:
+
 		// credits to cfx for finding this
-		// sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
+        // sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
 
 		hook::put<uint32_t>(hook::get_pattern<uint8_t>("BB 02 ? ? ? 39 1D", 1), 3); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
-	}
 
-	if (Game == GameType::RedDeadRedemption2)
-	{
+		break;
+
+		
+	case GameType::RedDeadRedemption2:
 
 		// we hook the function which is called right after the function where we want to edit the variable
 
-	 MH_Initialize();
+		MH_Initialize();
 
-	 MH_CreateHook(hook::get_call(hook::get_pattern("84 C0 75 26 E8", -0x11)) , hk_func, reinterpret_cast<void**>(&g_origfunc));
+		MH_CreateHook(hook::get_call(hook::get_pattern("84 C0 75 26 E8", -0x11)), hk_func, reinterpret_cast<void**>(&g_origfunc));
 
-	 MH_EnableHook(MH_ALL_HOOKS);
+		MH_EnableHook(MH_ALL_HOOKS);
 
+		break;
 	}
+
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
