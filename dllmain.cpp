@@ -13,19 +13,21 @@ enum class GameType
 	RedDeadRedemption2 = 2,
 };
 
-int32_t* loc = hook::get_address<int32_t*>(hook::get_pattern<uint8_t>("0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));  //address of rage::fwMapData::ms_entityLevelCap default value here is 0 we want to set this to 3
 
-std::initializer_list<int32_t> patch
-{
-	0x03
-};
+//address of rage::fwMapData::ms_entityLevelCap default value here is 0 we want to set this to 3
+int32_t *loc = hook::get_address<int32_t*>(hook::get_module_pattern("RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));
 
 typedef VOID(*func_t)(void *a1,UCHAR a2); 
-static func_t g_origfunc = nullptr; 
+func_t g_origfunc = nullptr; 
 
-static VOID hk_func(void *a1, UCHAR a2) 
+VOID hk_func(void *a1, UCHAR a2)
 {
+	std::initializer_list<int32_t> patch
+	{
+		0x03
+	};
 
+	//this is a horrible hack
 	hook::patch(loc, patch); //rage::fwMapData::ms_entityLevelCap is now 3
 
 	return  g_origfunc(a1, a2); 
@@ -40,7 +42,7 @@ static void modInit(GameType Game)
 		// credits to cfx for finding this
         // sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
 
-		hook::put<uint32_t>(hook::get_pattern<uint8_t>("BB 02 ? ? ? 39 1D", 1), 3); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
+		hook::put<uint32_t>(hook::get_pattern("BB 02 ? ? ? 39 1D", 1), 3); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
 
 		break;
 
@@ -83,7 +85,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 			{
 				if (gameType == GameType::Invalid)
 					throw std::runtime_error("Trying to use the mod with an unsupported game. 'GTA5.exe' or 'RDR2.exe' are expected");
-
 				modInit(gameType);
 
 			}
