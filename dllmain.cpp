@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <stdexcept>
-
+#include <memory>
 #include "Dependencies/Hooking.h"
 #include "Dependencies/minhook/include/MinHook.h"
 
@@ -16,12 +16,12 @@ enum class GameType
 };
 
 //address of rage::fwMapData::ms_entityLevelCap default value here is 0 we want to set this to 3
-int32_t* loc = hook::get_address<int32_t*>(hook::get_module_pattern<uint8_t>("RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));
+static auto loc = hook::get_address<int32_t*>(hook::get_module_pattern<uint8_t>(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));
 
 typedef VOID(*func_t)();
 static func_t g_origfunc = nullptr;
 
-static void hk_func()
+static VOID hk_func()
 {
 	auto result = g_origfunc;
 

@@ -62,9 +62,9 @@ namespace hook
 
 	//find patterns in a specific module
 	template<typename T = void>
-	inline auto get_module_pattern(const char* modulename, std::string_view pattern_string, ptrdiff_t offset = 0)
+	inline auto get_module_pattern(const wchar_t* modulename, std::string_view pattern_string, ptrdiff_t offset = 0)
 	{
-		auto moduleHandle = GetModuleHandle(modulename);
+		auto moduleHandle = GetModuleHandleW(modulename);
 
 		if (moduleHandle != nullptr)
 		{
