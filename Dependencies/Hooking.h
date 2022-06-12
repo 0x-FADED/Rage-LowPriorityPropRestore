@@ -46,18 +46,17 @@ namespace hook
 	}
 
 	//simple code to patch stuff
-	template<typename Bytes, typename AddressType>
-	inline void patch(AddressType address, std::initializer_list<Bytes> bytes)
+	template<typename T, size_t Bytes, typename AddressType>
+	inline void patch(AddressType address, const T(&patch)[Bytes])
 	{
-
 		DWORD oldProtect;
-		VirtualProtect(reinterpret_cast<PVOID>(address), bytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
+		VirtualProtect((void*)address, Bytes, PAGE_EXECUTE_READWRITE, &oldProtect);
 
-		memcpy(reinterpret_cast<PVOID>(address), &*bytes.begin(), bytes.size());
+		memcpy((void*)address, patch, Bytes);
 
-		VirtualProtect(reinterpret_cast<PVOID>(address), bytes.size(), oldProtect, &oldProtect);
+		VirtualProtect((void*)address, Bytes, oldProtect, &oldProtect);
 
-		FlushInstructionCache (GetCurrentProcess(), reinterpret_cast<PVOID>(address), bytes.size()); //not sure if we need this
+		FlushInstructionCache(GetCurrentProcess(), (void*)address, Bytes); //not sure if we need this 
 	}
 
 	//find patterns in a specific module

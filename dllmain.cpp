@@ -32,10 +32,7 @@ static VOID hk_func()
 		return result();
 	}
 
-	const std::initializer_list<int32_t> patch
-	{
-		0x03
-	};
+	const uint8_t patch[] { 0x03 };
 
 	//this is a horrible hack
 	hook::patch(loc, patch); //rage::fwMapData::ms_entityLevelCap is now 3 ..XD	
