@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Releasex64/ Rage-LowPriorityPropsRestore.map
+*.asi
+Releasex64/ Rage-LowPriorityPropsRestore.asi

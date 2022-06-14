@@ -23,31 +23,29 @@ static func_t g_origfunc = nullptr;
 
 static VOID hk_func()
 {
-	auto result = g_origfunc;
-
 	// doing this cuz game keeps setting rage::fwMapData::ms_entityLevelCap to 0
 
-	if (!result)
+	if (!g_origfunc)
 	{
-		return result();
+		return g_origfunc();
 	}
 
-	const uint8_t patch[] { 0x03 };
-
 	//this is a horrible hack
-	hook::patch(loc, patch); //rage::fwMapData::ms_entityLevelCap is now 3 ..XD	
+	hook::put<int32_t>(loc, 0x03); //rage::fwMapData::ms_entityLevelCap is now 3 ..XD	
 }
 void modInit(GameType Game)
 {
+	const uint8_t patch[7]{ 0xBB, 0x03, 0x00, 0x00, 0x00, 0x39, 0x1D };
+
 	switch (Game)
 	{
-
+		
 	case GameType::GrandTheftAutoV:
 
 		// credits to cfx for finding this
 		// sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
 
-		hook::put<uint32_t>(hook::get_pattern<uint8_t>("BB 02 ? ? ? 39 1D", 1), 3); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
+		hook::patch(hook::get_pattern<uint8_t>("BB 02 00 00 00 39 1D"), patch); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
 
 		break;
 
@@ -77,7 +75,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 		GetModuleFileNameW(GetModuleHandleW(nullptr), modulePath, static_cast<DWORD>(std::size(modulePath)));
 
 		wchar_t executableName[MAX_PATH]{};
-		_wsplitpath_s(modulePath, nullptr, 0, nullptr, 0, executableName, std::size(executableName), nullptr, 0);
+		_wsplitpath_s(modulePath, nullptr, NULL, nullptr, NULL, executableName, std::size(executableName), nullptr, NULL);
 
 		auto gameType = GameType::Invalid;
 

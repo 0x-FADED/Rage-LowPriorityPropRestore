@@ -20,7 +20,7 @@ namespace hook
 		DWORD oldProtect;
 		VirtualProtect((void*)address, sizeof(value), PAGE_EXECUTE_READWRITE, &oldProtect);
 
-		memcpy((void*)address, &value, sizeof(value));
+		std::memcpy((void*)address, &value, sizeof(value));
 
 		VirtualProtect((void*)address, sizeof(value), oldProtect, &oldProtect);
 
@@ -50,13 +50,13 @@ namespace hook
 	inline void patch(AddressType address, const T(&patch)[Bytes])
 	{
 		DWORD oldProtect;
-		VirtualProtect((void*)address, Bytes, PAGE_EXECUTE_READWRITE, &oldProtect);
+		VirtualProtect(reinterpret_cast<void*>(address), std::size(patch), PAGE_EXECUTE_READWRITE, &oldProtect);
 
-		memcpy((void*)address, patch, Bytes);
+		std::memcpy(reinterpret_cast<void*>(address), patch, std::size(patch));
 
-		VirtualProtect((void*)address, Bytes, oldProtect, &oldProtect);
+		VirtualProtect(reinterpret_cast<void*>(address), std::size(patch), oldProtect, &oldProtect);
 
-		FlushInstructionCache(GetCurrentProcess(), (void*)address, Bytes); //not sure if we need this 
+		FlushInstructionCache(GetCurrentProcess(), reinterpret_cast<void*>(address), std::size(patch)); //not sure if we need this 
 	}
 
 	//find patterns in a specific module
