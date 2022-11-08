@@ -1,11 +1,10 @@
 #include <Windows.h>
 #include <stdexcept>
-#include <memory>
 #include "Dependencies/Hooking.h"
-#include "Dependencies/minhook/include/MinHook.h"
 
-#pragma comment(lib,"Dependencies/minhook/libMinHook.x64.lib")
 
+#include "Dependencies/msdetours/detours.h"
+#pragma comment(lib,"Dependencies/msdetours/detours.lib")
 
 //credits to Disquse for research assistance and LMS for some valuable advice 
 enum class GameType
@@ -16,11 +15,10 @@ enum class GameType
 };
 
 //address of rage::fwMapData::ms_entityLevelCap default value here is 0 we want to set this to 3
-static auto loc = hook::get_address<int32_t*>(hook::get_module_pattern<uint8_t>(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));
+auto loc = hook::get_address<int32_t*>(hook::get_module_pattern<uint8_t>(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB));
 
 typedef VOID(*func_t)();
-static func_t g_origfunc = nullptr;
-
+static func_t g_origfunc = NULL;
 static VOID hk_func()
 {
 	// doing this cuz game keeps setting rage::fwMapData::ms_entityLevelCap to 0
@@ -39,7 +37,7 @@ void modInit(GameType Game)
 
 	switch (Game)
 	{
-		
+
 	case GameType::GrandTheftAutoV:
 
 		// credits to cfx for finding this
@@ -52,13 +50,11 @@ void modInit(GameType Game)
 
 	case GameType::RedDeadRedemption2:
 
-		// we hook the function where our variable is
-
-		MH_Initialize();
-
-		MH_CreateHook((hook::get_call((hook::get_pattern<uint8_t>("0F 47 C7 88 05", 0x9)))), hk_func, reinterpret_cast<void**>(&g_origfunc));
-
-		MH_EnableHook(MH_ALL_HOOKS);
+		auto addr = hook::get_call(hook::get_pattern<uint8_t>("0F 47 C7 88 05", 0x9));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttachEx(reinterpret_cast<PVOID*>(&addr), static_cast<PVOID>(hk_func), reinterpret_cast<PDETOUR_TRAMPOLINE*>(&g_origfunc), NULL, NULL);
+		DetourTransactionCommit();
 
 		break;
 	}
@@ -69,8 +65,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
 	switch (dwReason)
 	{
-	case DLL_PROCESS_ATTACH:
-	{
+	  case DLL_PROCESS_ATTACH:
+	  {
 		wchar_t modulePath[MAX_PATH]{};
 		GetModuleFileNameW(GetModuleHandleW(nullptr), modulePath, static_cast<DWORD>(std::size(modulePath)));
 
@@ -101,7 +97,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 			MessageBoxW(nullptr, buffer, L"Error", MB_ICONERROR);
 		}
-	}
+	  }
 
 	break;
 	}

@@ -9,7 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+*.asi
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -21,6 +21,7 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+Releasex64/
 x64/
 x86/
 [Ww][Ii][Nn]32/
@@ -362,5 +363,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Releasex64/ Rage-LowPriorityPropsRestore.map
+*.asi
+Releasex64/ Rage-LowPriorityPropsRestore.asi
+/Releasex64/ Rage-LowPriorityPropsRestore.asi
+*.asi
 *.asi
 Releasex64/ Rage-LowPriorityPropsRestore.asi

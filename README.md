@@ -8,6 +8,6 @@ and both of them for not losing patience on me
 and [Rockstar Games](https://www.rockstargames.com/) for not not making props labled with _PRI_OPTIONAL_LOW_ not load
 
 # Libraries used
-[minhook](https://github.com/TsudaKageyu/minhook) by **TsudaKageyu** and
+[Detours](https://github.com/microsoft/Detours) by **Microsoft** and
 [Hooking.Patterns](https://github.com/ThirteenAG/Hooking.Patterns) by **NTAuthority,ThirteenAG and 
 Cfx.re/fivem**
