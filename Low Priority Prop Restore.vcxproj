@@ -147,6 +147,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,11 +162,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\Hooking.h" />
-    <ClInclude Include="Dependencies\patterns\Hooking.Patterns.h" />
+    <ClInclude Include="src\scanner.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Dependencies\patterns\Hooking.Patterns.cpp" />
-    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\scanner.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
