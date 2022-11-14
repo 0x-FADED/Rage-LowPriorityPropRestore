@@ -1,8 +1,8 @@
 #include "scanner.h"
 
-	std::pair<uintptr_t, uintptr_t> GetModule()
+	std::pair<uintptr_t, uintptr_t> GetModule(const std::wstring_view moduleName)
 	{
-			const static uintptr_t moduleBase = reinterpret_cast<uintptr_t>(GetModuleHandleW(NULL));
+			const static uintptr_t moduleBase = reinterpret_cast<uintptr_t>(GetModuleHandleW(moduleName.data()));
 			const static uintptr_t moduleEnd = [&]()
 			{
 				auto ntHeaders = reinterpret_cast<PIMAGE_NT_HEADERS64>(moduleBase + reinterpret_cast<PIMAGE_DOS_HEADER>(moduleBase)->e_lfanew);
@@ -50,7 +50,7 @@
 	{
 		if (GetModuleHandleW(moduleName.data()) != nullptr)
 		{
-			uintptr_t address = FindPattern(GetModule().first, GetModule().second - GetModule().first, pattern.data());
+			uintptr_t address = FindPattern(GetModule(moduleName.data()).first, GetModule(moduleName.data()).second - GetModule(moduleName.data()).first, pattern.data());
 
 			if (address == NULL)
 				throw std::runtime_error("Failed to find pattern");
@@ -63,7 +63,7 @@
 	{
 		if (GetModuleHandleW(moduleName.data()) != nullptr)
 		{
-			uintptr_t address = FindPattern(GetModule().first, GetModule().second - GetModule().first, pattern.data());
+			uintptr_t address = FindPattern(GetModule(moduleName.data()).first, GetModule(moduleName.data()).second - GetModule(moduleName.data()).first, pattern.data());
 
 			if (address == NULL)
 				throw std::runtime_error("Failed to find pattern");
