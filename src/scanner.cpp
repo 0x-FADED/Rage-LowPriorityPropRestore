@@ -1,13 +1,13 @@
 #include "scanner.h"
+#include <Psapi.h>
 
 	std::pair<uintptr_t, uintptr_t> GetModule(const std::wstring_view moduleName)
 	{
-			const static uintptr_t moduleBase = reinterpret_cast<uintptr_t>(GetModuleHandleW(moduleName.data()));
-			const static uintptr_t moduleEnd = [&]()
-			{
-				auto ntHeaders = reinterpret_cast<PIMAGE_NT_HEADERS64>(moduleBase + reinterpret_cast<PIMAGE_DOS_HEADER>(moduleBase)->e_lfanew);
-				return static_cast<uintptr_t>(moduleBase + ntHeaders->OptionalHeader.SizeOfImage);
-			}();
+			MODULEINFO module = {};
+			GetModuleInformation(GetCurrentProcess(), GetModuleHandleW(moduleName.data()), &module, sizeof(MODULEINFO));
+
+			static const uintptr_t moduleBase = reinterpret_cast<uintptr_t>(module.lpBaseOfDll);
+			static const uintptr_t moduleEnd = static_cast<uintptr_t>(moduleBase + static_cast<uintptr_t>(module.SizeOfImage));
 
 			return { moduleBase, moduleEnd };
 	}
