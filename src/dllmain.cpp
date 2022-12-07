@@ -36,7 +36,7 @@ void modInit(GameType Game)
 
 	   { // credits to cfx for finding this
 		 // sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
-		 constexpr uint8_t data[]{ 0xBB, 0x03, 0x00, 0x00, 0x00, 0x39, 0x1D };
+		 constexpr const uint8_t data[]{ 0xBB, 0x03, 0x00, 0x00, 0x00, 0x39, 0x1D };
 		 hook::patch(scanner::GetAddress(L"GTA5.exe", "BB 02 00 00 00 39 1D"), data); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
 	   }
 		break;

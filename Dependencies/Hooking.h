@@ -21,7 +21,7 @@ namespace hook
 
 		VirtualProtect((void*)address, sizeof(value), oldProtect, &oldProtect);
 
-		FlushInstructionCache (GetCurrentProcess(), (void*)address, sizeof(value)); //not sure if we need this 
+		FlushInstructionCache (GetCurrentProcess(), (void*)address, sizeof(value));
 	}
 	//simple code to patch stuff
 	template<typename T, size_t Bytes, typename AddressType>
@@ -34,6 +34,6 @@ namespace hook
 
 		VirtualProtect(reinterpret_cast<void*>(address), std::size(patch), oldProtect, &oldProtect);
 
-		FlushInstructionCache(GetCurrentProcess(), reinterpret_cast<void*>(address), std::size(patch)); //not sure if we need this 
+		FlushInstructionCache(GetCurrentProcess(), reinterpret_cast<void*>(address), std::size(patch)); 
 	}
 }
