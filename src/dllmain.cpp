@@ -12,20 +12,19 @@ enum class GameType
 	RedDeadRedemption2 = 2,
 };
 
-//ptr to rage::fwMapData::ms_entityLevelCap default value here is 0 we want to set this to 3
-uintptr_t loc = NULL;
-typedef VOID(*func_t)();
-static func_t g_origfunc = nullptr;
-static VOID hk_func()
+//ptr to rage::fwMapData::ms_entityLevelCap default value here is PRI_OPTIONAL_MEDIUM we want to set this to PRI_OPTIONAL_LOW
+uintptr_t ms_entityLevelCap = NULL;
+typedef void(*t_function)();
+static t_function g_function = nullptr;
+static void hk_function()
 {
-	// doing this cuz game keeps setting rage::fwMapData::ms_entityLevelCap to 0
-	if (!g_origfunc)
+	// doing this cuz game keeps setting rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_MEDIUM
+	if (!g_function)
 	{
-		return g_origfunc();
+		return g_function();
 	}
 		
-	//this is a horrible hack
-	hook::put<int32_t>(loc, 0x03); //rage::fwMapData::ms_entityLevelCap is now 3 ..XD	
+	hook::put<int32_t>(ms_entityLevelCap, 0x03); //rage::fwMapData::ms_entityLevelCap is now PRI_OPTIONAL_LOW ..XD	
 }
 void modInit(GameType Game)
 {
@@ -43,11 +42,11 @@ void modInit(GameType Game)
 
 	case GameType::RedDeadRedemption2:
 	  {
-		loc = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB);
+		ms_entityLevelCap = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB);
 		auto addr = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 47 C7 88 05", 0xA);
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
-		DetourAttachEx(reinterpret_cast<PVOID*>(&addr), static_cast<PVOID>(hk_func), reinterpret_cast<PDETOUR_TRAMPOLINE*>(&g_origfunc), NULL, NULL);
+		DetourAttachEx(reinterpret_cast<PVOID*>(&addr), static_cast<PVOID>(hk_function), reinterpret_cast<PDETOUR_TRAMPOLINE*>(&g_function), nullptr, NULL);
 		DetourTransactionCommit();
 	  }
 		break;
@@ -95,7 +94,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 	break;
 	}
-
 
 	return TRUE;
 }
