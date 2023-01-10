@@ -9,3 +9,11 @@ and [Rockstar Games](https://www.rockstargames.com/) for not not making props la
 
 # Libraries used
 [Detours](https://github.com/microsoft/Detours) by **Microsoft**
+
+# Compatibility
+this is compatible with both [GTAV](https://www.rockstargames.com/gta-v) and [RDR2](https://www.rockstargames.com/reddeadredemption2/).
+
+# Installation
+- download any *.asi loader compatible with your game. **dinput8.dll** which comes with [ScriptHookRDR2](http://www.dev-c.com/rdr2/scripthookrdr2/) or [SHV](http://www.dev-c.com/gtav/scripthookv/) is recommended. 
+- put *.asi the loader(**dinput8.dll**) on root game directory where **RDR2.exe/GTAV.exe** is located.
+- then download the release build of the mod from [NexusMods](https://www.nexusmods.com/reddeadredemption2/mods/1892) or [GitHub release section](https://github.com/0x-FADED/Rage-LowPriorityPropRestore/releases) and extract the *.asi file and copy it where **RDR2.exe/GTAV.exe** is located.
