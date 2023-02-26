@@ -14,17 +14,16 @@ enum class GameType
 
 //ptr to rage::fwMapData::ms_entityLevelCap default value here is PRI_OPTIONAL_MEDIUM we want to set this to PRI_OPTIONAL_LOW
 uintptr_t ms_entityLevelCap = NULL;
-typedef void(*t_function)();
-static t_function g_function = nullptr;
+static void(*g_function)();
 static void hk_function()
 {
-	// doing this cuz game keeps setting rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_MEDIUM
+	// doing this because game keeps setting rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_MEDIUM
 	if (!g_function)
 	{
 		return g_function();
 	}
-		
-	hook::put<int32_t>(ms_entityLevelCap, 0x03); //rage::fwMapData::ms_entityLevelCap is now PRI_OPTIONAL_LOW ..XD	
+
+	hook::put<int32_t>(ms_entityLevelCap, 0x03);
 }
 void modInit(GameType Game)
 {
