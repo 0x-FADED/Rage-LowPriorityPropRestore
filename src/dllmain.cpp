@@ -41,12 +41,15 @@ void modInit(GameType Game)
 
 	case GameType::RedDeadRedemption2:
 	  {
-		ms_entityLevelCap = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB);
-		auto addr = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 47 C7 88 05", 0xA);
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourAttachEx(reinterpret_cast<PVOID*>(&addr), static_cast<PVOID>(hk_function), reinterpret_cast<PDETOUR_TRAMPOLINE*>(&g_function), nullptr, NULL);
-		DetourTransactionCommit();
+		if (GetModuleHandleW(L"vfs.asi") == nullptr)
+		{
+			ms_entityLevelCap = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB);
+			auto addr = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 47 C7 88 05", 0xA);
+			DetourTransactionBegin();
+			DetourUpdateThread(GetCurrentThread());
+			DetourAttachEx(reinterpret_cast<PVOID*>(&addr), static_cast<PVOID>(hk_function), reinterpret_cast<PDETOUR_TRAMPOLINE*>(&g_function), nullptr, NULL);
+			DetourTransactionCommit();
+		}
 	  }
 		break;
 	}
@@ -69,7 +72,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 		if (!_wcsicmp(executableName, L"GTA5"))
 			gameType = GameType::Invalid;
-		else if (!_wcsicmp(executableName, L"RDR2") && GetModuleHandleW(L"vfs.asi") == nullptr)
+		else if (!_wcsicmp(executableName, L"RDR2"))
 			gameType = GameType::RedDeadRedemption2;
 
 		try
