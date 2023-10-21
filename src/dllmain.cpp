@@ -68,8 +68,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 		auto gameType = GameType::Invalid;
 
 		if (!_wcsicmp(executableName, L"GTA5"))
-			gameType = GameType::GrandTheftAutoV;
-		else if (!_wcsicmp(executableName, L"RDR2"))
+			gameType = GameType::Invalid;
+		else if (!_wcsicmp(executableName, L"RDR2") && GetModuleHandleW(L"vfs.asi") == nullptr)
 			gameType = GameType::RedDeadRedemption2;
 
 		try
