@@ -25,35 +25,35 @@ static void hk_function()
 
 	hook::put<int32_t>(ms_entityLevelCap, 0x03);
 }
+
 void modInit(GameType Game)
 {
-	switch (Game)
-	{
-
-	case GameType::GrandTheftAutoV:
-
-	   { // credits to cfx for finding this
-		 // sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
-		 constexpr const uint8_t data[]{ 0xBB, 0x03, 0x00, 0x00, 0x00, 0x39, 0x1D };
-		 hook::patch(scanner::GetAddress(L"GTA5.exe", "BB 02 00 00 00 39 1D"), data); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
-	   }
-		break;
-
-	case GameType::RedDeadRedemption2:
-	  {
-		if (GetModuleHandleW(L"vfs.asi") == nullptr)
+		switch (Game)
 		{
+
+		 case GameType::GrandTheftAutoV:
+
+		 { // credits to cfx for finding this
+		  // sets rage::fwMapData::ms_entityLevelCap to PRI_OPTIONAL_LOW
+			 if ((GetModuleHandleW(L"vfs.dll") == nullptr)) // disable when LML is in use
+			 {
+				 constexpr const uint8_t data[]{ 0xBB, 0x03, 0x00, 0x00, 0x00, 0x39, 0x1D };
+				 hook::patch(scanner::GetAddress(L"GTA5.exe", "BB 02 00 00 00 39 1D"), data); // for GTAV mov ebx, 0x02 to mov ebx, 0x03
+			 }
+		 }
+		 break;
+
+		 case GameType::RedDeadRedemption2:
+		 {
 			ms_entityLevelCap = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 45 C2 89 05 ? ? ? ? 89 05", 0xB);
 			auto addr = scanner::GetOffsetFromInstruction(L"RDR2.exe", "0F 47 C7 88 05", 0xA);
 			DetourTransactionBegin();
 			DetourUpdateThread(GetCurrentThread());
 			DetourAttachEx(reinterpret_cast<PVOID*>(&addr), static_cast<PVOID>(hk_function), reinterpret_cast<PDETOUR_TRAMPOLINE*>(&g_function), nullptr, NULL);
 			DetourTransactionCommit();
+		 }
+		 break;
 		}
-	  }
-		break;
-	}
-
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
@@ -71,7 +71,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 		auto gameType = GameType::Invalid;
 
 		if (!_wcsicmp(executableName, L"GTA5"))
-			gameType = GameType::Invalid;
+			gameType = GameType::GrandTheftAutoV;
 		else if (!_wcsicmp(executableName, L"RDR2"))
 			gameType = GameType::RedDeadRedemption2;
 
